@@ -4,7 +4,7 @@ const API_KEY = "123**JI";
 
 /**
  *
- * @returns Open ThunderClient and use following inputs
+ * Open ThunderClient and use following inputs
  * Type: GET,
  * URL : http://localhost:3001/api/todos
  */
@@ -18,7 +18,7 @@ const GET = async () => {
 
 /**
  *
- * @returns Open ThunderClient and use following inputs
+ * Open ThunderClient and use following inputs
  * Type: DELETE,
  * URL : http://localhost:3001/api/todos
  * Body: {"id":2} Note: Id can be any valid number
@@ -37,4 +37,35 @@ const DELETE = async (request: Request) => {
   return NextResponse.json({ message: `Todo ${id} has been deleted` });
 };
 
-export { GET, DELETE };
+/**
+ *
+ * Open ThunderClient and use following inputs
+ * Type: POST,
+ * URL : http://localhost:3001/api/todos
+ * Body: {
+ *          "userId": 4,
+ *          "title": "REST API NextJs 13.5.3"
+ *      }
+ */
+const POST = async (request: Request) => {
+  const { userId, title }: Partial<Todo> = await request.json();
+  if (!userId || !title) {
+    return NextResponse.json({ message: "Missing required field in payload" });
+  }
+
+  const res = await fetch(DATA_SOURCE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "API-KEY": API_KEY,
+    },
+    body: JSON.stringify({ userId, title, completed: false }),
+  });
+
+  const newTodo: Todo = await res.json();
+  console.log("Res Status", res.status);
+
+  return NextResponse.json(newTodo);
+};
+
+export { GET, DELETE, POST };
