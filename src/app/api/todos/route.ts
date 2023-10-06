@@ -68,4 +68,35 @@ const POST = async (request: Request) => {
   return NextResponse.json(newTodo);
 };
 
-export { GET, DELETE, POST };
+/**
+ *
+ * Open ThunderClient and use following inputs
+ * Type: PUT,
+ * URL : http://localhost:3001/api/todos
+ * Body: {
+ *          "userId": 4,
+ *          "title": "REST API NextJs 13.5.3 PRO",
+ *          "completed": true,
+ *          "id": 1
+ *      }
+ */
+const PUT = async (request: Request) => {
+  const { id, userId, title, completed }: Todo = await request.json();
+
+  if (!id || !userId || !title || typeof completed !== "boolean") {
+    return NextResponse.json({ message: "Missing required field in payload" });
+  }
+
+  const res = await fetch(`${DATA_SOURCE_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "API-KEY": API_KEY,
+    },
+    body: JSON.stringify({ userId, title, completed }),
+  });
+
+  return NextResponse.json({ message: `PUT request status: ${res.status}` });
+};
+
+export { GET, DELETE, POST, PUT };
